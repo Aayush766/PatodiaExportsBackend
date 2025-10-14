@@ -8,7 +8,20 @@ const contactMessageSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    index: true, 
   },
+
+  countryCode: {
+        type: String,
+        required: true,
+        default: '+91',
+    },
+
+    phone: {
+        type: String,
+        required: true,
+    },
+
   subject: {
     type: String,
   },
