@@ -10,6 +10,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    mobile: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     password: {
       type: String,
       required: true,
@@ -22,6 +27,16 @@ const userSchema = new mongoose.Schema(
     isFirstLogin: {
       type: Boolean,
       default: true,
+    },
+    resetOtp: {
+      type: String,
+    },
+    resetOtpExpires: {
+      type: Date,
+    },
+    resetOtpVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
