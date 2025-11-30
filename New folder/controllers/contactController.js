@@ -1,13 +1,13 @@
 const ContactMessage = require('../models/contactMessage');
 exports.saveMessage = async (req, res) => {
   try {
-    const { name, email, subject, message ,countryCode, phone } = req.body;
+    const { name, email, subject, message } = req.body;
 
-    if (!name || !email || !message || !phone || !countryCode) {
+    if (!name || !email || !message) {
       return res.status(400).json({ message: 'Name, email, and message are required.' });
     }
 
-    const newMessage = new ContactMessage({ name, email, subject, message, countryCode, phone });
+    const newMessage = new ContactMessage({ name, email, subject, message });
     await newMessage.save();
     
     res.status(201).json({ message: 'Thank you for your message. We will get back to you shortly.' });
