@@ -121,7 +121,7 @@ const sendResetOtp = async (req, res) => {
     // Send OTP via email
     await sendEmail({
       to: user.email,
-      subject: 'Lurnex - Password Reset OTP',
+      subject: 'PatodiaExports Admin - Password Reset OTP',
       text: `Your OTP for resetting your password is: ${otp}. It is valid for 10 minutes.`,
     });
 

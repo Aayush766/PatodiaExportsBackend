@@ -14,9 +14,9 @@ const createAdmin = async () => {
       useUnifiedTopology: true,
     });
 
-    const adminEmail = "blaze.aayush23@gmail.com";
-    const adminPassword = "Aayush@766";
-    const adminMobile = "7667553793";
+    const adminEmail = "b129162112@gmail.com";
+    const adminPassword = "BipulRaj@123";
+    const adminMobile = "9155420942";
 
     // Check if admin exists
     const existingAdmin = await User.findOne({ email: adminEmail });
