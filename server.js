@@ -10,6 +10,7 @@ const productRoutes = require('./routes/productRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
+const aboutRoutes = require('./routes/aboutRoutes');
 
 const app = express();
 
@@ -78,6 +79,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/about', aboutRoutes);
+
 
 /* -----------------------------------------
    Root Route
