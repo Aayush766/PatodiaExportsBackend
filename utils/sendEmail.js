@@ -1,23 +1,24 @@
 // utils/sendEmail.js
-const { Resend } = require("resend");
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // your Gmail address
+    pass: process.env.EMAIL_PASS, // app password (NOT normal password)
+  },
+});
 
 const sendEmail = async ({ to, subject, text, html }) => {
-  try {
-    const response = await resend.emails.send({
-      from: "Patodia Exports <onboarding@resend.dev>", // default free email identity
-      to,
-      subject,
-      html: html || `<p>${text}</p>`,
-    });
+  const mailOptions = {
+    from: `"Patodia-Exports" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    text,
+    html: html || text,
+  };
 
-    console.log("Email sent successfully:", response);
-    return response;
-  } catch (error) {
-    console.error("Email sending error:", error);
-    throw error;
-  }
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = sendEmail;
