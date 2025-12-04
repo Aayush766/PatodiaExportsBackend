@@ -16,49 +16,18 @@ const aboutRoutes = require('./routes/aboutRoutes');
 const app = express();
 
 /* -----------------------------------------
-   CORS CONFIG
-   - Allows local Vite/React ports
-   - Allows admin + main Patodia Exports domains
+   🔓 SIMPLE CORS (LET IT WORK)
+   - Allows ALL origins (good enough for public API)
+   - If you want to restrict later, we can tighten it
 ------------------------------------------ */
-const allowedOrigins = [
-  // Local development
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:5175',
-  'http://localhost:5176',
-  'http://localhost:5177',
-  'http://localhost:3000',
-
-  // Production domains (adjust to your real domains)
-  'https://patodiaexports.com',
-  'https://www.patodiaexports.com',
-  'https://admin.patodiaexports.com',
-];
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow non-browser tools like Postman/cURL (no Origin header)
-    if (!origin) return callback(null, true);
-
-    const isAllowed = allowedOrigins.some((allowed) => {
-      if (allowed instanceof RegExp) return allowed.test(origin);
-      return allowed === origin;
-    });
-
-    if (isAllowed) {
-      return callback(null, true);
-    }
-
-    console.log('🚫 Blocked by CORS:', origin);
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
-// Apply CORS globally
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: true,          // Reflects the request origin in Access-Control-Allow-Origin
+    credentials: true,     // Allow credentials if ever needed
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 /* -----------------------------------------
    Body Parsers
@@ -120,13 +89,14 @@ app.use((req, res, next) => {
 });
 
 /* -----------------------------------------
-   Global Error Handler (includes CORS errors)
+   Global Error Handler
 ------------------------------------------ */
 app.use((err, req, res, next) => {
-  console.error('🔥 Global Error Handler:', err.message);
+  console.error('🔥 Global Error Handler:', err);
 
-  if (err.message === 'Not allowed by CORS') {
-    return res.status(403).json({ message: 'CORS error: Origin not allowed' });
+  // If response already sent, just end
+  if (res.headersSent) {
+    return next(err);
   }
 
   res.status(500).json({ message: 'Internal Server Error' });
