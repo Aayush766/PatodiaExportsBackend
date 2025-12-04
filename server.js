@@ -8,14 +8,15 @@ dotenv.config();
 
 const productRoutes = require('./routes/productRoutes');
 const contactRoutes = require('./routes/contactRoutes');
-const authRoutes = require('./routes/authRoutes.js');
-const userRoutes = require('./routes/userRoutes.js');
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const aboutRoutes = require('./routes/aboutRoutes');
 
 const app = express();
 
 /* -----------------------------------------
-   🔥 CORS FIX: Works for ALL local Vite ports
+   CORS FIX – Allows all local Vite ports AND
+   both www / non-www patodiaexport.com
 ------------------------------------------ */
 const allowedOrigins = [
   'http://localhost:5173',
@@ -24,22 +25,25 @@ const allowedOrigins = [
   'http://localhost:5176',
   'http://localhost:5177',
   'http://localhost:3000',
-  'https://wwww.patodiaexport.com',
-  'https://patodiaexport.com',
   'https://admin.patodiaexport.com',
-
+  /^https:\/\/(www\.)?patodiaexport\.com$/
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow Postman/cURL
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+      if (!origin) return callback(null, true); // Allow Postman, cURL etc.
+
+      const isAllowed = allowedOrigins.some((allowed) => {
+        return allowed instanceof RegExp ? allowed.test(origin) : allowed === origin;
+      });
+
+      if (isAllowed) return callback(null, true);
+
       console.log('🚫 Blocked by CORS:', origin);
       return callback(new Error('Not allowed by CORS'));
     },
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -52,7 +56,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* -----------------------------------------
-   Debug every request
+   Request Logger
 ------------------------------------------ */
 app.use((req, res, next) => {
   console.log(`➡️ ${req.method} ${req.originalUrl}`);
@@ -69,18 +73,17 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('MongoDB Connected successfully.'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 /* -----------------------------------------
-   Mount Routes
+   API Routes
 ------------------------------------------ */
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/about', aboutRoutes);
-
 
 /* -----------------------------------------
    Root Route
@@ -92,8 +95,8 @@ app.get('/', (req, res) => {
 /* -----------------------------------------
    404 Handler
 ------------------------------------------ */
-app.use((req, res, next) => {
-  console.log('❌ 404 for path:', req.method, req.originalUrl);
+app.use((req, res) => {
+  console.log('❌ 404 Not Found:', req.method, req.originalUrl);
   res.status(404).json({ message: 'Not Found', path: req.originalUrl });
 });
 
@@ -102,5 +105,5 @@ app.use((req, res, next) => {
 ------------------------------------------ */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
