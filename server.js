@@ -29,7 +29,7 @@ const allowedOrigins = [
   'http://localhost:5177',
   'http://localhost:3000',
 
-  // Production domains (adjust if needed)
+  // Production domains (adjust to your real domains)
   'https://patodiaexports.com',
   'https://www.patodiaexports.com',
   'https://admin.patodiaexports.com',
@@ -57,10 +57,8 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-// Apply CORS
+// Apply CORS globally
 app.use(cors(corsOptions));
-// Handle preflight requests
-app.options('*', cors(corsOptions));
 
 /* -----------------------------------------
    Body Parsers
